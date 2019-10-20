@@ -61,7 +61,6 @@ class LoginPage extends Component {
   // TODO: add error rendering
   render() {
     return (
-
       <div className="Login">
         <Form onSubmit={this.handleSubmit} >
           <Form.Group controlId="formGroupEmail">
