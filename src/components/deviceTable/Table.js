@@ -55,6 +55,7 @@ class DeviceTable extends Component {
                     striped
                     bordered
                     small
+                    className="center-text"
                     data={tableData}
                 />
             </div>
