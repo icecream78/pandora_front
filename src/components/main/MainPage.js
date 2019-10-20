@@ -1,8 +1,17 @@
+import { connect } from "react-redux";
 import React, { Component } from 'react';
-import './App.css';
+import {
+  Redirect,
+} from "react-router-dom";
+import './MainPage.css';
 
 class MainPage extends Component {
   render() {
+    // TODO: check user token for expire and resave user between saves
+    if (!this.props.user) {
+      return <Redirect to="/login" />
+    }
+
     return (
       <div className="App">
         <header className="App-header">
@@ -23,4 +32,8 @@ class MainPage extends Component {
   }
 }
 
-export default MainPage;
+const mapStateToProps = state => ({
+  user: state.user
+});
+
+export default connect(mapStateToProps)(MainPage);

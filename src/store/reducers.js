@@ -1,16 +1,13 @@
 import ACTIONS from './actions';
 
-const initialState = {
-    user: null,
-}
+import initialState from './init.state';
 
 const userReducer = (state = initialState, action) => {
     switch (action.type) {
         case ACTIONS.TYPES.AUTH: {
-            console.log(action);
-
             let user = action.payload;
-            let newState = { ...user };
+            let newState = { ...state, user: { ...user } };
+            localStorage.setItem('token', user.token)
             return newState;
         }
 
