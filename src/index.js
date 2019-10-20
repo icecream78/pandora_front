@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import { MainPage } from './components';
+import App from './App';
 
-ReactDOM.render(<MainPage />, document.getElementById('root'));
+
+ReactDOM.render(<App />, document.getElementById('root'));

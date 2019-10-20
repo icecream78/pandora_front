@@ -3,7 +3,7 @@ const TYPES = {
 };
 
 const auth = userInfo => ({
-    action: TYPES.AUTH,
+    type: TYPES.AUTH,
     payload: userInfo
 });
 

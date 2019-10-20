@@ -1,1 +1,2 @@
-export { default as MainPage } from './main/App'
+export { default as MainPage } from './main/MainPage'
+export { default as LoginPage } from './login/Login'
