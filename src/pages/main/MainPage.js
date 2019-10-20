@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import {
   Redirect,
 } from "react-router-dom";
-import DeviceTable from '../deviceTable/Table';
+import DeviceTable from '../../components/deviceTable/Table';
 import './MainPage.css';
 
 class MainPage extends Component {

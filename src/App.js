@@ -4,7 +4,7 @@ import {
     Route,
 } from "react-router-dom";
 import React, { Component } from 'react';
-import { MainPage, LoginPage } from './components';
+import { MainPage, LoginPage } from './pages';
 
 import { Provider as ReduxProvider } from "react-redux";
 import configureStore from "./store/storeModel";

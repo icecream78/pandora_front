@@ -17,7 +17,7 @@
     "redux-logger": "^3.0.6"
   },
   "scripts": {
-    "start": "API_URL=http://localhost:3000 webpack-dev-server --mode development --open --hot",
+    "start": "API_URL=http://localhost:3001 webpack-dev-server --mode development --open --hot",
     "build": "webpack --mode production"
   },
   "eslintConfig": {
