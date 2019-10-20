@@ -16,9 +16,7 @@ class LoginPage extends Component {
       isValid: false,
     };
 
-    console.log(this);
-
-    this.authUrl = process.env.API_URL + '/auth/login'
+    this.authUrl = process.env.API_URL + '/auth/login';
 
     // crutches for correct handling events
     this.handleSubmit = this.handleSubmit.bind(this);
