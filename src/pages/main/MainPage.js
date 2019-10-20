@@ -1,10 +1,12 @@
 import axios from 'axios';
 import { connect } from "react-redux";
 import React, { Component } from 'react';
+import { Button } from 'react-bootstrap';
 import {
   Redirect,
 } from "react-router-dom";
 import DeviceTable from '../../components/deviceTable/Table';
+
 import './MainPage.css';
 
 class MainPage extends Component {
@@ -16,6 +18,7 @@ class MainPage extends Component {
     this.lightListUrl = process.env.API_URL + '/lights/list';
     this.lightSwitchUrl = process.env.API_URL + '/lights/switch';
     this.handleLightTrigger = this.handleLightTrigger.bind(this);
+    this.handleCreateLightDevice = this.handleCreateLightDevice.bind(this);
   }
 
   componentDidMount() {
@@ -82,6 +85,10 @@ class MainPage extends Component {
     });
   }
 
+  handleCreateLightDevice() {
+    return this.props.history.push('/newDevice');
+  }
+
   render() {
     // TODO: check user token for expire and resave user between saves
     if (!this.props.user) {
@@ -95,6 +102,7 @@ class MainPage extends Component {
         </div>
 
         <DeviceTable data={this.state.light || []} trigger={this.handleLightTrigger} />
+        <Button className="margin-left" variant="primary" onClick={this.handleCreateLightDevice} >Добавить новое устройство</Button>
       </div>
     );
   }
