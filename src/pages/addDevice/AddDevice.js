@@ -5,6 +5,8 @@ import { Button, Form } from 'react-bootstrap';
 import {
   Redirect,
 } from "react-router-dom";
+import ACTIONS from '../../store/actions';
+
 
 import './AddDevice.css';
 
@@ -13,17 +15,97 @@ class AddDevice extends Component {
     super(props);
     this.state = {
       manufactures: [],
-      newDevice: { name: '', manufacturer: '', address: '', state: '', userId: '' },
+      name: '', manufacturer: '', address: '', state: '', userId: '',
     };
+
+    this.manufactureListUrl = process.env.API_URL + '/services/manufactures';
+    this.usersListUrl = process.env.API_URL + '/services/users';
     this.createLightDeviceUrl = process.env.API_URL + '/lights/create';
-    this.manufacturesListUrl = process.env.API_URL + '/manufactures/list';
+
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.loadManufactureList = this.loadManufactureList.bind(this);
+  }
+
+  loadManufactureList() {
+    const config = {
+      headers: {
+        Authorization: 'Bearer ' + this.props.user.token
+      }
+    };
+
+    axios.get(this.manufactureListUrl, config).then(resp => {
+      if (resp.status !== 200) {
+        // TODO: render error or make popup message
+        console.log('error response');
+        alert('Ошибка при загрузке списка производителей. Попробуйте позже');
+        return;
+      }
+
+      this.props.loadManufactures(resp.data.result);
+    }).catch(err => {
+      alert('Ошибка при загрузке списка производителей. Попробуйте позже');
+    });
+  }
+
+  loadUsersList() {
+    const config = {
+      headers: {
+        Authorization: 'Bearer ' + this.props.user.token
+      }
+    };
+
+    axios.get(this.usersListUrl, config).then(resp => {
+      if (resp.status !== 200) {
+        // TODO: render error or make popup message
+        console.log('error response');
+        alert('Ошибка при загрузке списка пользователей. Попробуйте позже');
+        return;
+      }
+
+      this.props.loadUsers(resp.data.result);
+      console.log(this);
+    }).catch(err => {
+      alert('Ошибка при загрузке списка пользователей. Попробуйте позже');
+    });
   }
 
   componentDidMount() {
+    if (this.props.manufactureList && this.props.manufactureList.length === 0) {
+      this.loadManufactureList();
+    }
+    if (this.props.usersList && this.props.usersList.length === 0) {
+      this.loadUsersList();
+    }
   }
 
-  handleSubmit() {
+  handleSubmit(event) {
+    event.preventDefault();
+
+    const config = {
+      headers: {
+        Authorization: 'Bearer ' + this.props.user.token
+      }
+    };
+
+    axios.post(this.createLightDeviceUrl, {
+      name: this.state.name,
+      manufacturer: this.state.manufacturer,
+      address: this.state.address,
+      state: this.state.state,
+      userId: this.state.userId,
+    }, config).then(resp => {
+      if (resp.status !== 200) {
+        // TODO: render error or make popup message
+        console.log('error response');
+        alert('Ошибка при создании нового устройства. Попробуйте позже');
+        return;
+      }
+
+      alert('Новое устройство успешно создано');
+      this.props.history.push("/");
+    }).catch(err => {
+      alert('Ошибка при создании нового устройства. Попробуйте позже');
+    });
   }
 
   render() {
@@ -41,29 +123,43 @@ class AddDevice extends Component {
         <Form onSubmit={this.handleSubmit} >
           <Form.Group controlId="formGroupEmail">
             <Form.Label>Название устройства</Form.Label>
-            <Form.Control type="text" placeholder="Введите название" onChange={(event) => ({ name: event.target.value })} />
+            <Form.Control type="text" placeholder="Введите название" onChange={(event) => this.setState({ name: event.target.value })} />
           </Form.Group>
           {/* TODO: move manufacturer to select input */}
           <Form.Group controlId="manufacturer">
             <Form.Label>Производитель</Form.Label>
-            <Form.Control type="text" placeholder="Выберите производителя" onChange={(event) => ({ manufacturer: event.target.value })} />
+            <Form.Control as="select">
+              <option>Выберите производителя</option>
+              {this.props.manufactureList.map(manufacturer => (
+                <option onClick={(event) => this.setState({ manufacturer: manufacturer.id })}> {manufacturer.name} </option>
+              ))}
+            </Form.Control>
           </Form.Group>
           <Form.Group controlId="address">
             <Form.Label>Адрес установки</Form.Label>
-            <Form.Control type="text" placeholder="Введите адрес установки" onChange={(event) => ({ address: event.target.value })} />
+            <Form.Control type="text" placeholder="Введите адрес установки" onChange={(event) => this.setState({ address: event.target.value })} />
           </Form.Group>
-          {/* TODO: move initial state to select input */}
+          {/* TODO: move initial state to select input with load states*/}
           <Form.Group controlId="state">
             <Form.Label>Начальное состояние</Form.Label>
-            <Form.Control type="text" placeholder="Выберите начальное состояние" onChange={(event) => ({ state: event.target.value })} />
+            <Form.Control as="select">
+              <option>Выберите начальное состояние</option>
+              <option onClick={(event) => this.setState({ state: 1 })}>Вкл</option>
+              <option onClick={(event) => this.setState({ state: 2 })}>Выкл</option>
+            </Form.Control>
           </Form.Group>
           {/* TODO: move userId to select input */}
           <Form.Group controlId="userId">
             <Form.Label>Ответственный</Form.Label>
-            <Form.Control type="text" placeholder="Выберите ответственного человека" onChange={(event) => ({ userId: event.target.value })} />
+            <Form.Control as="select">
+              <option>Выберите ответственного</option>
+              {this.props.usersList.map(user => (
+                <option onClick={(event) => this.setState({ userId: user.id })}> {user.nickname} </option>
+              ))}
+            </Form.Control>
           </Form.Group>
-          <Button block type="submit">
-            Login
+          <Button className="centerCreateBtn" type="submit">
+            Создать
           </Button>
         </Form>
       </div>
@@ -72,7 +168,16 @@ class AddDevice extends Component {
 }
 
 const mapStateToProps = state => ({
-  user: state.user
+  user: state.user,
+  manufactureList: state.manufactureList,
+  usersList: state.usersList,
 });
 
-export default connect(mapStateToProps)(AddDevice);
+const mapDispatchToProps = dispatch => {
+  return {
+    loadManufactures: (item) => dispatch(ACTIONS.loadManufactureList(item)),
+    loadUsers: (item) => dispatch(ACTIONS.loadSystemUsersList(item)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddDevice);

@@ -22,3 +22,7 @@
     max-width: 720px;
   }
 }
+
+.centerCreateBtn {
+  margin-left: 50%;
+}
