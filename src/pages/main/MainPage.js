@@ -109,7 +109,7 @@ class MainPage extends Component {
 
     let button = null;
     // TODO: move this check to store field
-    if (this.props.role === 1) {
+    if (this.props.user.role === 1) {
       button = <Button className="margin-left" variant="primary" onClick={this.handleCreateLightDevice} >Добавить новое устройство</Button>;
     }
 
