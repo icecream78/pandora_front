@@ -1,10 +1,14 @@
 import axios from 'axios';
 import { connect } from "react-redux";
 import React, { Component } from 'react';
+import { Button } from 'react-bootstrap';
 import {
   Redirect,
 } from "react-router-dom";
 import DeviceTable from '../../components/deviceTable/Table';
+import ACTIONS from '../../store/actions';
+
+
 import './MainPage.css';
 
 class MainPage extends Component {
@@ -15,7 +19,10 @@ class MainPage extends Component {
     };
     this.lightListUrl = process.env.API_URL + '/lights/list';
     this.lightSwitchUrl = process.env.API_URL + '/lights/switch';
+
     this.handleLightTrigger = this.handleLightTrigger.bind(this);
+    this.handleCreateLightDevice = this.handleCreateLightDevice.bind(this);
+    this.handleLogout = this.handleLogout.bind(this);
   }
 
   componentDidMount() {
@@ -26,6 +33,9 @@ class MainPage extends Component {
     const config = {
       headers: {
         Authorization: 'Bearer ' + this.props.user.token
+      },
+      params: {
+        limit: 40,
       }
     };
 
@@ -82,19 +92,35 @@ class MainPage extends Component {
     });
   }
 
+  handleCreateLightDevice() {
+    return this.props.history.push('/newDevice');
+  }
+
+  handleLogout() {
+    this.props.logout();
+    return this.props.history.push('/login');
+  }
+
   render() {
     // TODO: check user token for expire and resave user between saves
     if (!this.props.user) {
       return <Redirect to="/login" />
     }
 
+    let button = null;
+    // TODO: move this check to store field
+    if (this.props.user.role === 1) {
+      button = <Button className="margin-left" variant="primary" onClick={this.handleCreateLightDevice} >Добавить новое устройство</Button>;
+    }
+
     return (
       <div className="App top-margin">
         <div className="top-corner" >
-          {this.props.user.nickname} - {this.props.user.roleDescription}
+          {this.props.user.nickname} - {this.props.user.roleDescription} <Button variant="danger" size='sm' onClick={this.handleLogout}>Выйти</Button>
         </div>
 
         <DeviceTable data={this.state.light || []} trigger={this.handleLightTrigger} />
+        {button}
       </div>
     );
   }
@@ -104,4 +130,10 @@ const mapStateToProps = state => ({
   user: state.user
 });
 
-export default connect(mapStateToProps)(MainPage);
+const mapDispatchToProps = dispatch => {
+  return {
+    logout: () => dispatch(ACTIONS.logout()),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MainPage);

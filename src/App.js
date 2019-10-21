@@ -4,7 +4,7 @@ import {
     Route,
 } from "react-router-dom";
 import React, { Component } from 'react';
-import { MainPage, LoginPage } from './pages';
+import { MainPage, LoginPage, AddDevicePage } from './pages';
 
 import { Provider as ReduxProvider } from "react-redux";
 import configureStore from "./store/storeModel";
@@ -21,6 +21,7 @@ class App extends Component {
                     <Router>
                         <Switch>
                             <Route path="/login" component={LoginPage} />
+                            <Route path="/newDevice" component={AddDevicePage} />
                             <Route path="/" component={MainPage} />
                         </Switch>
                     </Router>
