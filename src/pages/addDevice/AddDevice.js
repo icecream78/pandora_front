@@ -24,6 +24,7 @@ class AddDevice extends Component {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.loadManufactureList = this.loadManufactureList.bind(this);
+    this.handleLogout = this.handleLogout.bind(this);
   }
 
   loadManufactureList() {
@@ -108,6 +109,11 @@ class AddDevice extends Component {
     });
   }
 
+  handleLogout() {
+    this.props.logout();
+    return this.props.history.push('/login');
+  }
+
   render() {
     // TODO: check user token for expire and resave user between saves
     if (!this.props.user) {
@@ -117,7 +123,7 @@ class AddDevice extends Component {
     return (
       <div className="AddDevice top-margin">
         <div className="top-corner" >
-          {this.props.user.nickname} - {this.props.user.roleDescription}
+          {this.props.user.nickname} - {this.props.user.roleDescription} <Button variant="danger" size='sm' onClick={this.handleLogout}>Выйти</Button>
         </div>
 
         <Form onSubmit={this.handleSubmit} >
@@ -177,6 +183,7 @@ const mapDispatchToProps = dispatch => {
   return {
     loadManufactures: (item) => dispatch(ACTIONS.loadManufactureList(item)),
     loadUsers: (item) => dispatch(ACTIONS.loadSystemUsersList(item)),
+    logout: () => dispatch(ACTIONS.logout()),
   }
 }
 

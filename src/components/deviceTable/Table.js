@@ -51,6 +51,7 @@ class DeviceTable extends Component {
         const tableData = { columns: columnsDescription, rows: mappedData };
         return (
             <div>
+                {/* TODO: fix ordering in table. Order work fine on table, but not icons at any of columns present */}
                 <MDBDataTable
                     striped
                     bordered
